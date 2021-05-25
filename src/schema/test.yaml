@@ -1,0 +1,1233 @@
+id: https://github.com/alliance-genome/agr_persistent_schema/alliance_schema
+name: Alliance-Schema-Prototype
+description: Alliance Schema Prototype
+
+license: https://creativecommons.org/publicdomain/zero/1.0/
+version: 0.0.1
+
+prefixes:
+  alliance: 'http://alliancegenome.org'
+  linkml: 'https://w3id.org/linkml/'
+  gff: 'https://w3id.org/gff'
+  faldo: 'http://biohackathon.org/resource/faldo#'
+  biolink: 'https://w3id.org/biolink/vocab/'
+  NLMID: 'https://www.ncbi.nlm.nih.gov/nlmcatalog/?term='
+  schema: 'http://schema.org/'
+
+default_prefix: alliance
+default_range: string
+
+default_curi_maps:
+  - obo_context
+  - idot_context
+
+emit_prefixes:
+  - rdf
+  - rdfs
+  - xsd
+  - skos
+
+imports:
+  - linkml:types
+
+subsets:
+  alliance subset:
+    description: >-
+      Subset consisting of just the alliance activities
+      
+classes:
+
+  Allele:
+    # is_a: GenomicEntity
+    description: >-
+      One of multiple possible forms of a functional genomic
+      element (most often described as a locus or gene),
+      differing from the reference DNA sequence.  The genomic
+      element can be endogenous or constructed.
+    slots:
+      - name
+      - symbol
+      - description
+      - taxon_id
+      - date_produced # mixin?
+      - data_provider # mixin?
+      - release
+      - cross_references
+      - synonyms
+      - affected_genes
+      - from_species
+      - phenotype_associations
+      - disease_associations
+      - contains_construct
+      - molecular_mutation
+      - functional_impact
+      - generation_method
+      - associated_references
+      - associated_notes
+      - germline_transmission_status
+      - parent_cell_line
+      - mutant_cell_lines
+      - embryonic_stem_cell_lines
+      - images
+      - feature_type
+      - carried_by
+      - origins
+      - database_status
+      - inheritence_mode
+      - in_collection
+      - transposon_insertion
+      - aberration
+      - is_extinct
+    exact_mappings:
+      - SO:0001023
+
+  ReferenceType:
+    description: >-
+      Describes the relation between a reference and an object
+    slots:
+      - reference_association
+      - references
+
+  NoteType:
+    description: >-
+      Describes the relation between a note and an object
+    slots:
+      - note_association
+      - notes
+
+  Construct:
+    description: >-
+      Dummy construct class
+
+  CellLine:
+    description: >-
+      Dummy cell line class
+
+  Image:
+    description: >-
+      Dummy image class
+
+  SequenceTargetingReagent:
+    description: >-
+      Dummy sequence targeting reagent class
+
+  VariantGenomicLocation:
+    aliases: ['genomic location']
+    slots:
+      - subject
+      - predicate
+      - object
+      - assembly
+      - start
+      - end
+    slot_usage:
+      subject:
+        range: Variant
+        description: >-
+          subject should be the variant identifier
+      object:
+        range: Chromosome
+        description: >-
+          object should be the chromosome identifier
+    defining_slots:
+      - subject
+      - predicate
+      - object
+      - assembly
+      - start
+      - end
+  GenomicEntity:
+    slots:
+      - id
+      - taxon
+
+  Transcript:
+    is_a: GenomicEntity
+    description: >-
+
+    id_prefixes:
+      - ENSEMBL
+      - FB
+      - WB
+      - MGI
+      - RGD
+      - SGD
+      - ZFIN
+
+  Gene:
+    description: >-
+    is_a: GenomicEntity
+    slots:
+      - curie
+      - synonyms
+      - secondary_identifiers
+      - cross_references
+      - genomic_locations
+      - name
+      - symbol
+      - gene_synopsis
+      - gene_synopsis_URL
+      - type
+    id_prefixes:
+      - ENSEMBL
+      - HGNC
+      - FB
+      - MGI
+      - RGD
+      - SGD
+      - WB
+      - ZFIN
+
+  DiseaseAssociation:
+    description: >-
+      Dummy disease association class
+
+  PhenotypeAssociation:
+    description: >-
+      Dummy phenotype association class
+
+  Species:
+
+  Disease:
+
+  Phenotype:
+
+  CrossReference:
+    is_a: InformationContentEntity
+    slots:
+      - curie
+      - page_areas
+      - display_name
+      - prefix
+    defining_slots:
+      - cross_reference_id
+      - page_areas
+
+  InformationContentEntity:
+    aliases: ['information', 'information artifact', 'information entity']
+    abstract: true
+    description: >-
+      a piece of information that typically describes some topic of discourse or is used as support.
+      Precedence of identifiers for references is as follows: PMID if available; DOI if not; actual
+      alternate CURIE otherwise.
+    slots:
+      - creation_date
+      - curie
+      - id
+    exact_mappings:
+      - IAO:0000030
+
+  AuthorReference:
+    slots:
+      - corresponding_author
+      - first_name
+      - middle_names
+      - last_name
+      - initials
+      - cross_references
+
+  Resource:
+    is_a: InformationContentEntity
+    slots:
+      - title
+      - iso_abbreviation
+      - medline_abbreviation
+      - copyright_date
+      - print_issn
+      - online_issn
+      - publisher
+      - volumes
+      - summary
+      - synonyms
+      - authors
+      - editors
+    id_prefixes:
+      - PMID
+      - NLMID
+      - DOI
+      - SGD
+      - FB
+      - WB
+      - ZFIN
+      - MGI
+      - RGD
+    slot_usage:
+      id:
+        description: >-
+          Precedence of identifiers for references is as follows: PMID if available; DOI if not; actual
+          alternate CURIE otherwise.
+      title:
+        description: >-
+          the title of the publication
+
+  Reference:
+    is_a: InformationContentEntity
+    slots:
+      - title
+      - alliance_category
+      - date_published
+      - year_published
+      - month_published
+      - day_published
+      - date_arrived_in_PubMed
+      # date arrived in source enumeration
+      - date_last_modified_in_PubMed
+      - date_last_modified
+      - volume
+      - pages
+      - abstract
+      - citation
+      - PubMed_type
+      - issue_name
+      - issue_date
+      - mod_reference_types
+      - authors
+      - tags
+      - topics
+      - cross_references
+      - publisher
+      - keywords
+      - from_resource
+    id_prefixes:
+      - PMID
+      - NLMID
+      - DOI
+      - SGD
+      - FB
+      - WB
+      - ZFIN
+      - MGI
+      - RGD
+      - PMC
+      - DOI
+    slot_usage: # use regex to constrain local id
+      id:
+        pattern: # check this add a regex - check about resourceDescriptor
+
+  Person:
+    slots:
+      - last_name
+      - first_name
+      - orcid
+    exact_mappings:
+      - schema:person
+      - foaf:Person
+    slot_usage:
+      person id:
+        identifier: true
+
+  Chromosome:
+    description: The ID of the landmark used to establish the coordinate system for the current feature.
+    slots:
+      - curie
+
+  Assembly:
+    slots:
+      - curie
+  VariantGeneConsequence:
+    aliases: ['gene level consequence']
+    slots:
+      - subject
+      - object
+      - vep_consequence
+      - vep_impact
+      - polyphen_score
+      - polyphen_prediction
+      - sift_score
+      - sift_prediction
+    slot_usage:
+      subject:
+        range: Variant
+        description: >-
+          subject should be the variant identifier
+      object:
+        range: Gene
+        description: >-
+          object should be the gene identifier
+
+  VariantTranscriptConsequence:
+    aliases: ['TranscriptLevelConsequence']
+    description: >-
+      Class for transcript-level VEP results
+    slots:
+      - subject
+      - object
+      - vep_consequence
+      - vep_impact
+      - polyphen_score
+      - polyphen_prediction
+      - sift_score
+      - sift_prediction
+      - amino_acid_reference
+      - amino_acid_variant
+      - codon_reference
+      - codon_variant
+      - cdna_start
+      - cdna_end
+      - cds_start
+      - cds_end
+      - protein_start
+      - protein_end
+      - hgvs_protein_nomenclature
+      - hgvs_coding_nomenclature
+    slot_usage:
+      subject:
+        range: Variant
+        description: >-
+          subject should be the variant identifier
+      object:
+        range: Transcript
+        description: >-
+          object should be the transcript identifier
+      amino_acid_reference:
+        description: >-
+          Amino acid sequence encoded by codon(s) in reference genome sequence
+          altered by the variant
+      amino_acid_variant:
+        description: >-
+          Amino acid sequence encoded by codon(s) in variant sequence
+      codon_reference:
+        description: >-
+          Reference genome sequence of codon(s) altered by the variant.  Bases
+          affected by the variant are given in upper case, bases flanking the
+          variation are given in lower case
+      codon_variant:
+        description: >-
+          Sequence of codon(s) in variant sequence altered by the variant.
+          Bases affected by the variant are given in upper case, bases flanking
+          the variation are given in lower case
+      cdna_start:
+        description: Start position of variant in cDNA coordinates
+      cnda_end:
+        description: End position of variant in cDNA coordinates
+      cds_start:
+        description: Start position of variant in CDS coordinates
+      cds_end:
+        description: End position of variant in CDS coordinates
+      protein_start:
+        description: Start position of variant in amino acid sequence
+      protein_end:
+        description: End position of variant in amino acid sequence
+      hgvs_protein_nomenclature:
+        description: HGVS protein sequence (HGVSp) name
+      hgvs_coding_nomenclature:
+        description: HGVS coding sequence (HGVSc) name
+
+  Variant:
+    is_a: GenomicEntity
+    description: >-
+      A DNA sequence that differs relative to a designated
+      reference sequence.  The sequence occurs at a single
+      position or in contiguous nucleotides.
+    slots:
+      - curie
+      - id
+      - hgvs_nomenclature
+      - genomic_reference_sequence
+      - genomic_variant_sequence
+      - padding_left
+      - padding_right
+      - date_produced
+      - release
+      - data_provider
+      - computed_gene
+      - variant_of_transcript
+      - variant_of_allele
+      - synonyms
+      - type
+      - references
+      - notes
+      - is_variant_of_transcript
+      - is_variant_of_allele
+      - synonyms
+      - type
+      - references
+      - notes
+      - protein_sequence
+      - cross_references
+    exact_mappings:
+      - SO:0001059
+
+  GeneGenomicLocation:
+    slots:
+      - subject
+      - predicate
+      - object
+      - assembly
+      - start
+      - end
+    slot_usage:
+      subject:
+        range: Variant
+        description: >-
+          subject should be the gene identifier
+      object:
+        range: Chromosome
+        description: >-
+          object should be the chromosome identifier
+    defining_slots:
+      - subject
+      - predicate
+      - object
+      - assembly
+      - start
+      - end
+
+slots:
+
+
+  affected_genes:
+    description:
+      Gene(s) altered in allele
+    multivalued: true
+    domain: Allele
+    range: Gene
+
+  contains_construct:
+    domain: Allele
+    range: Construct
+
+  molecular_mutation:
+    description: >-
+      Description of the DNA changes if precise
+      genomic location unknown
+    domain: Allele
+    range: string
+    values_from:
+      - SO
+
+  functional_impact:
+    description: >-
+      Experimentally assessed functional impact of the
+      allele, e.g. knockout / amorphic
+    domain: Allele
+    range: string
+
+  generation_method:
+    description: >-
+      Technique used to create the allele, e.g.
+      spontaneous / naturally occuring / radiation
+    domain: Allele
+    range: string
+    multivalued: false
+
+  associated_references:
+    description: >-
+      References associated with the entity in some way
+    range: ReferenceType
+    multivalued: true
+
+  reference_association:
+    description: >-
+      Description of how a reference is associated with
+      an entity, e.g. molecular / origin / other
+    domain: ReferenceType
+    range: reference_association_types
+
+  reference:
+    description: >-
+      Associated reference
+    domain: ReferenceType
+    range: Reference
+
+  associated_notes:
+    description: >-
+      Notes associated with the entity in some way
+    range: NoteType
+
+  note_association:
+    description: >-
+      Description of how a note is associated with
+      an entity, e.g. curators comments / private / origin
+    domain: NoteType
+    range: note_association_types
+
+  feature_type:
+    description: >-
+      Allele classification
+    domain: Allele
+    range: string
+    values_from:
+      - SO
+
+  carried_by:
+    description: >-
+      Affected genomic models that carry the allele
+    multivalued: true
+    domain: Allele
+    range: AffectedGenomicModel
+
+  origins:
+    singular_name: origin
+    description: >-
+      Affected genomic models that the allele was introduced in
+    multivalued: true
+    domain: Allele
+    range: AffectedGenomicModel
+
+  germline_transmission_status:
+    description: >-
+      For alleles made in cell lines, have they been
+      transmitted to the germline of an animal
+    domain: Allele
+    range: string
+
+  parent_cell_line:
+    description: >-
+      Parental cell line of alleles made in embryonic
+      stem cells
+    domain: Allele
+    range: CellLine
+
+  mutant_cell_lines:
+    singular_name: mutant_cell_line
+    description: >-
+      Mutant cell lines known to carry the allele
+    domain: Allele
+    range: CellLine
+    multivalued: true
+
+  embryonic_stem_cell_lines:
+    aliases: ['allele_derivation']
+    singular_name: embryonic_stem_cell_line
+    description: >-
+      Embryonic stem cell lines known to carry the allele
+
+  images:
+    singular_name: image
+    description: >-
+      Any associated image
+    range: Image
+
+  database_status:
+    description: >-
+      Database status of the allele
+    range: database_statuses
+
+  inheritence_mode:
+    description: >-
+      Mode of inheritence, e.g. dominant / semi-dominant /
+      recessive / unknown
+    domain: Allele
+    range: modes_of_inheritence
+
+  in_collection:
+    description: >-
+      Set of high-throughput alleles made by large projects
+    domain: Allele
+    range: string
+
+  transposon_insertion:
+    description: >-
+      Associated transposon insertion that causes the
+      mutation
+    domain: Allele
+    range: string
+
+  aberration:
+    description: >-
+      Associated deficiency (etc.) whose breakpoint causes
+      the mutation
+    domain: Allele
+    range: string
+
+  is_extinct:
+    description: >-
+      Does the allele still exist in a population somewhere?
+    domain: Allele
+    range: boolean
+
+  located on:
+    range: Chromosome
+
+  notes:
+    singular_name: note
+    range: string
+    multivalued: true
+
+  vep_impact:
+    description: VEP predicted impact of variation on molecule
+    range: string
+
+
+  vep_consequence:
+    description: VEP consequence
+    range: vep_consequence_levels
+
+  polyphen_score:
+    description: PolyPhen-2 score between 0 and 1
+    domain: VariantGeneConsequence
+    range: float
+
+  polyphen_prediction:
+    description: PolyPhen-2 prediction
+    range: polyphen_prediction_levels
+
+  sift_score:
+    description: SIFT score between 0 and 1
+    domain: VariantGeneConsequence
+    range: float
+
+  sift_prediction:
+    description: SIFT prediction
+    range: sift_prediction_levels
+
+
+  amino_acid_reference:
+    description: reference genome amino acid sequence at variant position
+    domain: VariantTranscriptConsequence
+    range: string
+
+  amino_acid_variant:
+    description: variant amino acid sequence at variant position
+    domain: VariantTranscriptConsequence
+    range: string
+
+  codon_reference:
+    description: >-
+      reference sequence of codon(s) affected by variation - bases
+      outside of the variant region are in lower case, those within are in
+      upper case (e.g. cTa)
+    domain: VariantTranscriptConsequence
+
+  codon_variant:
+    description: >-
+      variant sequence of codon(s) affected by variation - bases
+      outside of the variant region are in lower case, those within are in
+      upper case (e.g. cAa)
+    domain: VariantTranscriptConsequence
+
+  cdna_start:
+    description: start position of variation in cDNA coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  cdna_end:
+    description: end position of variation in cDNA coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  cds_start:
+    description: start position of variation in CDS coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  cds_end:
+    description: end position of variation in CDS coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  protein_start:
+    description: start position of variation in protein amino acid coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  protein_end:
+    description: end position of variation in protein amino acid coordinates
+    domain: VariantTranscriptConsequence
+    range: integer
+
+  hgvs_protein_nomenclature:
+    description: HGVSp nomenclature for variation in protein
+    domain: VariantTranscriptConsequence
+
+  hgvs_coding_nomenclature:
+    description: HGVSc nomenclature for variation in coding sequence
+    domain: VariantTranscriptConsequence
+  hgvs_nomenclature:
+    description: HGVSg nomenclature for variant
+    domain: Variant
+
+  genomic_reference_sequence:
+    description: reference genome sequence at variation position
+    domain: Variant
+    range: string
+
+  genomic_variant_sequence:
+    description: variant genome sequence at variation position
+    domain: Variant
+    range: string
+
+
+  padding_left:
+    description: >-
+      flanking sequence upstream of the variation position
+      on the sense strand of the reference genome
+    domain: Variant
+    range: string
+
+  padding_right:
+    description: >-
+      flanking sequence downstream of the variation position
+      on the sense strand of the reference genome
+    domain: Variant
+    range: biological_sequence
+
+  protein_sequence:
+    domain: Variant
+    range: string
+
+  computed_gene:
+    domain: Variant
+    range: Gene
+
+  variant_of_transcript:
+    domain: Variant
+    range: Transcript
+
+  variant_of_allele:
+    domain: Variant
+    range: Allele
+
+  is_variant_of_transcript:
+    domain: Variant
+    range: Transcript
+
+  is_variant_of_allele:
+    domain: Variant
+    range: Allele
+
+  start:
+    description: The start of the feature in positive 1-based integer coordinates
+
+  end:
+    description: The end of the feature in positive 1-based integer coordinates
+
+  assembly:
+    domain: GenomicEntity
+    required: true
+    range: Chromosome
+
+  orcid:
+    domain: InformationContentEntity
+
+  curie:
+
+  taxon:
+    description: >-
+    range: uriorcurie
+
+  secondary_identifiers:
+    multivalued: true
+
+  gene_synopsis:
+    description: >-
+
+  gene_synopsis_URL:
+    description: >-
+
+  genomic_locations:
+    domain: GenomicEntity
+    range: GeneGenomicLocation
+    multivalued: true
+
+  id:
+    identifier: true
+    required: true
+    multivalued: false
+    description: >-
+      A unique identifier for a thing. Must be either a CURIE shorthand for a URI or a complete URI
+    range: uriorcurie
+
+  date_produced:
+    description: date AGR data generated by MOD
+    domain: GenomicEntity
+    range: date
+
+  release:
+    description: MOD release ID
+    range: string
+
+  data_provider:
+    description: MOD that provided data
+    multivalued: true
+    range: string
+
+  association_slot:
+    abstract: true
+    aliases: ['edge property', 'statement property']
+    description: >-
+      any slot that relates an association to another entity
+    exact_mappings:
+      - biolink:association_slot
+
+  subject:
+    is_a: association_slot
+    description: >-
+      connects an association to the subject of the association.
+      For example, in a gene-to-phenotype association, the gene is subject and phenotype is object.
+    required: true
+    exact_mappings:
+      - owl:annotatedSource
+      - biolink:subject
+
+  object:
+    description: >-
+      connects an association to the object of the association.
+      For example, in a gene-to-phenotype association, the gene is subject and phenotype is object.
+    required: true
+    exact_mappings:
+      - biolink:object
+
+  predicate:
+    description: >-
+      A high-level grouping for the relationship type. This is analogous to category for nodes.
+      In RDF, this corresponds to rdf:predicate and in Neo4j this corresponds to the
+      relationship type.
+    required: true
+    exact_mappings:
+      - biolink:predicate
+
+  description:
+    aliases: ['definition']
+    description: >-
+      a human-readable description of an entity
+
+  name:
+    description: >-
+      a human-readable name for an entity
+
+  cross_references:
+    singular_name: cross_reference
+    description: >-
+    multivalued: true
+
+  symbol:
+    description: >-
+      Symbol for a particular thing
+    exact_mappings:
+      - biolink:symbol
+
+  from_species:
+    description: holds between a genomic entity and a species
+    range: Species
+
+  synonyms:
+    singular_name: synonym
+    description: holds between a named thing and a synonym
+    multivalued: true
+
+  negated:
+    range: boolean
+    description: if set to true, then the association is negated i.e. is not true
+
+  qualifiers:
+    singular_name: qualifier
+    description: >-
+      This is the MeSH qualifier term that is optionally added to the descriptor term.
+
+  type:
+    range: uriorcurie
+
+  taxon_id:
+    description: NCBI taxid
+    range: integer
+
+  references:
+    singular_name: reference
+    description: holds between an object and a reference
+    multivalued: true
+    domain: Resource
+    range: Reference
+
+  phenotype_associations:
+    singular_name: phenotype_association
+    range: PhenotypeAssociation
+
+  disease_associations:
+    singular_name: disease_association
+    range: DiseaseAssociation
+
+  prefix:
+    required: true
+    multivalued: false
+    description: >-
+      Denormalization to help with classifying types of crossReferences,
+      distinguishing DOIs from PMC ids, etc.
+
+  page_areas:
+    required: true
+    multivalued: true
+    range: string
+
+  display_name:
+    required: true
+    multivalued: false
+    range: string
+
+  creation_date:
+    aliases: [ 'publication date' ]
+    range: date
+    description: >-
+      date on which an entity was created. This can be applied to nodes or edges
+    exact_mappings:
+      - dct:createdOn
+      - WIKIDATA_PROPERTY:P577
+
+  summary:
+    description: >-
+    domain: InformationContentEntity
+    range: string
+
+  copyright_date:
+    description: >-
+    domain: InformationContentEntity
+    range: date
+
+  authors:
+    multivalued: true
+    domain: InformationContentEntity
+    range: AuthorReference
+
+  corresponding_author:
+    description: >-
+    range: InformationContentEntity
+    domain: InformationContentEntity
+
+  first_name:
+    description: >-
+    domain: InformationContentEntity
+    range: InformationContentEntity
+
+  middle_names:
+    description: >-
+    domain: InformationContentEntity
+    range: InformationContentEntity
+    multivalued: false
+
+  last_name:
+    description: >-
+    domain: InformationContentEntity
+    range: InformationContentEntity
+
+  initials:
+    description: >-
+    domain: InformationContentEntity
+    range: InformationContentEntity
+
+  title:
+    multivalued: false
+    description: >-
+      A human readable title for a reference.
+    domain: InformationContentEntity
+    range: string
+
+  volumes:
+    singular_name: volume
+    multivalued: false
+    range: string
+    domain: InformationContentEntity
+    description: >-
+
+  publisher:
+    range: InformationContentEntity
+    domain: InformationContentEntity
+
+  address:
+    description: >-
+      the particulars of the place where someone or an organization is situated.  For now, this slot is a
+      simple text "blob" containing all relevant details of the given location for fitness of purpose.
+      For the moment, this "address" can include other contact details such as email and phone number(?).
+
+  iso_abbreviation:
+    description: >-
+    domain: Resource
+    range: string
+
+  medline_abbreviation:
+    description: >-
+    domain: Resource
+    range: string
+
+  print_issn:
+    description: >-
+    domain: Resource
+    range: string
+
+  online_issn:
+    description: >-
+    domain: Resource
+    range: string
+
+  editors:
+    singular_name: editor
+    description: >-
+      holds between a resource and a editor_resource
+    multivalued: true
+    domain: Resource
+    range: AuthorReference
+
+
+  reference_id:
+    domain: Reference
+
+  topics:
+    singular_name: topic
+    range: uriorcurie
+    exact_mappings:
+      - foaf:topic
+    description: Connects an object to a vocabulary term or ontology that describes some aspect of the entity.
+
+  PubMed_type:
+    description: >-
+      Type of InformationContentEntity as described by pub med.
+    range: string
+    domain: InformationContentEntity
+
+  date_published:
+    description: >-
+      Date on which an entity was created.
+    range: date
+    domain: InformationContentEntity
+
+  date_last_modified_in_PubMed:
+    description: >-
+      Date on which an entity was created.
+    range: date
+    domain: InformationContentEntity
+
+  date_last_modified:
+    description: >-
+      Date on which an entity was last modified by the MOD.
+    range: date
+
+  year_published:
+    description: >-
+      Year in which an entity was created.
+    range: string
+    domain: InformationContentEntity
+
+  month_published:
+    description: >-
+      Month in which an entity was created.
+    range: string
+    domain: InformationContentEntity
+
+  day_published:
+    description: >-
+      Day in which an entity was created.
+    range: string
+    domain: InformationContentEntity
+
+
+  date_arrived_in_PubMed:
+    description: Day in which a reference or resource was created in PUBMED. Only relevant for PUBMED references.
+    range: date
+    domain: InformationContentEntity
+
+  mod_reference_types:
+    singular_name: mod_reference_type
+    multivalued: true
+    description: List of types as assigned at a MOD.
+
+  tags:
+    singular_name: tag
+    description: >-
+      Optional ist of controlled vocabulary tags that give categories to each pub (ie: "can show images").
+    multivalued: true
+    range: tag_set
+
+  issue_date:
+    description: Date on which an entity was issued.
+    domain: InformationContentEntity
+    range: date
+
+  last_modified:
+    description: Date on which an entity was last modified in PubMed or in the MOD.
+    domain: InformationContentEntity
+    range: date
+
+  volume:
+    multivalued: false
+    range: string
+    domain: InformationContentEntity
+
+  pages:
+    description: page number of source referenced for statement or publication
+    domain: InformationContentEntity
+    multivalued: true
+    exact_mappings:
+      - WIKIDATA_PROPERTY:P304
+
+  abstract:
+    multivalued: false
+    domain: Reference
+    range: string
+
+  citation:
+    multivalued: false
+    domain: Reference
+    range: string
+
+  issue_name:
+    multivalued: false
+    domain: Reference
+
+  alliance_category:
+    multivalued: false
+    domain: Reference
+
+  keywords:
+    multivalued: true
+    description: keywords tagging a publication
+    domain: InformationContentEntity
+    range: string
+
+  from_resource:
+    domain: Reference
+    range: Resource
+
+enums:
+
+  database_statuses:
+    permissible_values:
+      live:
+      dead:
+      suppressed:
+      history:
+      private:
+      approved:
+
+  reference_association_types:
+    permissible_values:
+      molecular:
+      other:
+
+  note_association_types:
+    permissible_values:
+      molecular:
+      origin:
+      cytology:
+      private:
+      curator_comments:
+
+  modes_of_inheritence:
+    permissible_values:
+      dominant:
+      recessive:
+      semi_dominant:
+      unknown:
+
+
+  tag_set:
+    permissible_values:
+      image:
+      test:
+
+  vep_consequence_levels:
+    permissible_values:
+      high:
+      moderate:
+      low:
+      modifier:
+
+  sift_prediction_levels:
+    permissible_values:
+      deleterious:
+      tolerated:
+
+  polyphen_prediction_levels:
+    permissible_values:
+      possibly_damaging:
+      probably_damaging:
+      benign:
